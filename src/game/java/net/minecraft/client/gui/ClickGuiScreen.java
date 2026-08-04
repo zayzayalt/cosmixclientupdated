@@ -237,17 +237,20 @@ public class ClickGuiScreen extends GuiScreen {
 
         private void drawSetting(Setting<?> s, int x, int y) {
 
-            if (s instanceof BooleanSetting bs) {
+            if (s instanceof BooleanSetting) {
+                BooleanSetting bs = (BooleanSetting)s;
                 fontRendererObj.drawString(bs.getName() + " : " + bs.getValue(), x + 4, y + 4, TEXT_COLOR);
                 return;
             }
 
-            if (s instanceof ModeSetting ms) {
+            if (s instanceof ModeSetting) {
+                ModeSetting ms = (ModeSetting)s;
                 fontRendererObj.drawString(ms.getName() + " : " + ms.getValue() + " ...", x + 4, y + 4, TEXT_COLOR);
                 return;
             }
 
-            if (s instanceof NumberSetting number) {
+            if (s instanceof NumberSetting) {
+                NumberSetting number = (NumberSetting)s;
                 drawRect(x, y, x + width, y + 14, MODULE_DISABLED);
                 fontRendererObj.drawString(number.getName() + " : " + number.getValue(), x + 4, y + 4, TEXT_COLOR);
                 int barX = x + 4;
