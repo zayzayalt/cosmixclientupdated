@@ -38,7 +38,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.WorldServerDemo;
 import net.minecraft.world.storage.ISaveFormat;
 import net.minecraft.world.storage.WorldInfo;
-import net.peyton.eagler.gui.GuiCredits;
 import net.lax1dude.eaglercraft.profile.*;
 
 public class GuiMainMenu extends GuiScreen {
@@ -197,8 +196,6 @@ public class GuiMainMenu extends GuiScreen {
 		this.buttonList.add(new GuiButton(1, this.width / 2 - 100, p_73969_1_, I18n.format("menu.singleplayer")));
 		this.buttonList.add(
 				new GuiButton(2, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 1, I18n.format("menu.multiplayer")));
-		this.buttonList
-				.add(new GuiButton(14, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.format("menu.credits")));
 	}
 
 	/**
@@ -256,9 +253,6 @@ public class GuiMainMenu extends GuiScreen {
 			}
 		}
 
-		if (button.id == 14) {
-			this.mc.displayGuiScreen(new GuiCredits(this, "/assets/eagler/credits.txt"));
-		}
 	}
 
 	public void confirmClicked(boolean result, int id) {
@@ -493,8 +487,7 @@ public class GuiMainMenu extends GuiScreen {
 		}
 
 		this.drawString(this.fontRendererObj, s, 2, this.height - 20, -1);
-		this.drawString(this.fontRendererObj, "Eaglercraft 1.12.2 (" + EaglercraftVersion.projectOriginVersion + ")", 2,
-				this.height - 10, -1);
+		this.drawString(this.fontRendererObj, "CosmixClient v1.0.4 by jamie666", 2, this.height - 10, -1);
 		this.drawString(this.fontRendererObj, "Resources copyright Mojang AB", this.field_193979_N, this.height - 10,
 				-1);
 
