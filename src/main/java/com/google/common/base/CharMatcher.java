@@ -223,12 +223,29 @@ public abstract class CharMatcher implements Predicate<Character> {
 	 * Determines whether a character is invisible; that is, if its Unicode category
 	 * is any of SPACE_SEPARATOR, LINE_SEPARATOR, PARAGRAPH_SEPARATOR, CONTROL,
 	 * FORMAT, SURROGATE, and PRIVATE_USE according to ICU4J.
+	 * 
+	 * NOTE: This implementation avoids using RangesMatcher during static initialization
+	 * to prevent static initializer failures in TeaVM/JavaScript environments.
 	 */
-	public static final CharMatcher INVISIBLE = new RangesMatcher("CharMatcher.INVISIBLE",
+	public static final CharMatcher INVISIBLE = new CharMatcher("CharMatcher.INVISIBLE") {
+		private final char[] STARTS = 
 			("\u0000\u007f\u00ad\u0600\u061c\u06dd\u070f\u1680\u180e\u2000\u2028\u205f\u2066\u2067\u2068"
-					+ "\u2069\u206a\u3000\ud800\ufeff\ufff9\ufffa").toCharArray(),
+					+ "\u2069\u206a\u3000\ud800\ufeff\ufff9\ufffa").toCharArray();
+		private final char[] ENDS = 
 			("\u0020\u00a0\u00ad\u0604\u061c\u06dd\u070f\u1680\u180e\u200f\u202f\u2064\u2066\u2067\u2068"
-					+ "\u2069\u206f\u3000\uf8ff\ufeff\ufff9\ufffb").toCharArray());
+					+ "\u2069\u206f\u3000\uf8ff\ufeff\ufff9\ufffb").toCharArray();
+
+		@Override
+		public boolean matches(char c) {
+			int index = Arrays.binarySearch(STARTS, c);
+			if (index >= 0) {
+				return true;
+			} else {
+				index = ~index - 1;
+				return index >= 0 && c <= ENDS[index];
+			}
+		}
+	};
 
 	private static String showCharacter(char c) {
 		String hex = "0123456789ABCDEF";
@@ -249,10 +266,27 @@ public abstract class CharMatcher implements Predicate<Character> {
 	 * <p>
 	 * <b>Note:</b> as the reference file evolves, we will modify this constant to
 	 * keep it up to date.
+	 * 
+	 * NOTE: This implementation avoids using RangesMatcher during static initialization
+	 * to prevent static initializer failures in TeaVM/JavaScript environments.
 	 */
-	public static final CharMatcher SINGLE_WIDTH = new RangesMatcher("CharMatcher.SINGLE_WIDTH",
-			"\u0000\u05be\u05d0\u05f3\u0600\u0750\u0e00\u1e00\u2100\ufb50\ufe70\uff61".toCharArray(),
-			"\u04f9\u05be\u05ea\u05f4\u06ff\u077f\u0e7f\u20af\u213a\ufdff\ufeff\uffdc".toCharArray());
+	public static final CharMatcher SINGLE_WIDTH = new CharMatcher("CharMatcher.SINGLE_WIDTH") {
+		private final char[] STARTS = 
+			"\u0000\u05be\u05d0\u05f3\u0600\u0750\u0e00\u1e00\u2100\ufb50\ufe70\uff61".toCharArray();
+		private final char[] ENDS = 
+			"\u04f9\u05be\u05ea\u05f4\u06ff\u077f\u0e7f\u20af\u213a\ufdff\ufeff\uffdc".toCharArray();
+
+		@Override
+		public boolean matches(char c) {
+			int index = Arrays.binarySearch(STARTS, c);
+			if (index >= 0) {
+				return true;
+			} else {
+				index = ~index - 1;
+				return index >= 0 && c <= ENDS[index];
+			}
+		}
+	};
 
 	/** Matches any character. */
 	public static final CharMatcher ANY = new FastMatcher("CharMatcher.ANY") {
