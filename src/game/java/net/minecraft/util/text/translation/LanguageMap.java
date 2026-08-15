@@ -1,7 +1,5 @@
 package net.minecraft.util.text.translation;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 import net.lax1dude.eaglercraft.EagRuntime;
@@ -25,12 +23,6 @@ public class LanguageMap {
 	 * as "%d", "%3$d", "%.2f"
 	 */
 	private static final Pattern NUMERIC_VARIABLE_PATTERN = Pattern.compile("%(\\d+\\$)?[\\d\\.]*[df]");
-
-	/**
-	 * A Splitter that splits a string on the first "=". For example, "a=b=c" would
-	 * split into ["a", "b=c"].
-	 */
-	private static final Splitter EQUAL_SIGN_SPLITTER = Splitter.on('=').limit(2);
 
 	/** Is the private singleton instance of StringTranslate. */
 	private static final LanguageMap instance = new LanguageMap();
@@ -61,10 +53,11 @@ public class LanguageMap {
 		for (int i = 0, l = strs.size(); i < l; ++i) {
 			String s = strs.get(i);
 			if (!s.isEmpty() && s.charAt(0) != 35) {
-				String[] astring = (String[]) Iterables.toArray(EQUAL_SIGN_SPLITTER.split(s), String.class);
-				if (astring != null && astring.length == 2) {
-					String s1 = astring[0];
-					String s2 = NUMERIC_VARIABLE_PATTERN.matcher(astring[1]).replaceAll("%s"); // TODO: originally
+				// Use simple string split instead of Splitter to avoid CharMatcher initialization
+				int equalsIndex = s.indexOf('=');
+				if (equalsIndex > 0 && equalsIndex < s.length() - 1) {
+					String s1 = s.substring(0, equalsIndex);
+					String s2 = NUMERIC_VARIABLE_PATTERN.matcher(s.substring(equalsIndex + 1)).replaceAll("%s"); // TODO: originally
 																								// "%$1s"
 																								// but must be "%s" to
 																								// work with TeaVM
